@@ -10,14 +10,17 @@ const AuthContext = React.createContext({
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
-  const [userRole, setUserRole] = useState('');
+  const [userRole, setUserRole] = useState("");
+  const [userId, setUserId] = useState("");
 
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
     setToken(token);
     localStorage.setItem("token", token);
+    console.log(parseJwt(token));
     setUserRole(parseJwt(token).role);
+    setUserId(parseJwt(token).userId);
   };
 
   const logoutHandler = () => {
@@ -26,13 +29,18 @@ export const AuthContextProvider = (props) => {
   };
 
   const parseJwt = (token) => {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
     return JSON.parse(jsonPayload);
-};
+  };
 
   const contextValue = {
     token: token,
@@ -40,6 +48,7 @@ export const AuthContextProvider = (props) => {
     login: loginHandler,
     logout: logoutHandler,
     userRole: userRole,
+    userId: userId,
   };
 
   return (

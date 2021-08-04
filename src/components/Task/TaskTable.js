@@ -1,17 +1,19 @@
 import GenericTable from "../Table/GenericTable";
 import { useState, useEffect } from "react";
 import { useContext } from "react";
-import classes from "./User.module.css";
+import classes from "./Task.module.css";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
 
 const columns = [
   { id: "id", label: "User ID", minWidth: 170 },
-  { id: "email", label: "Email", minWidth: 100 },
-  { id: "firstName", label: "First Name", minWidth: 100 },
-  { id: "lastName", label: "Last Name", minWidth: 100 },
-  { id: "username", label: "Username", minWidth: 100 },
-  { id: "role", label: "role", minWidth: 100 },
+  { id: "description", label: "Description", minWidth: 100 },
+  { id: "pm", label: "Project Manager", minWidth: 100 },
+  { id: "progress", label: "Progress", minWidth: 100 },
+  { id: "status", label: "Status", minWidth: 100 },
+  { id: "deadline", label: "Deadline", minWidth: 100 },
+  { id: "project", label: "Project", minWidth: 100 },
+  { id: "assignee", label: "Assignee", minWidth: 100 },
   { id: "actions", label: "Actions", minWidth: 100 },
   ,
 ];
@@ -22,8 +24,21 @@ const TaskTable = () => {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  const userId = authCtx.userId;
+  let tasksURL; 
+  if(authCtx.userRole === "ADMIN"){
+    tasksURL = "/api/v1/tasks";
+    console.log('**3333*');
+  } else if(authCtx.userRole === "PM"){
+    tasksURL = "/api/v1/users/" + userId + "/projects/tasks";
+    console.log('**444*');
+  } else if(authCtx.userRole === "DEV"){
+    tasksURL = "/api/v1/users/" + userId + "/tasks";
+    console.log('**555*');
+  }
   const fetchTasks = () => {
-    const promise = axios.get("/api/v1/tasks", {
+    const promise = axios.get(tasksURL, {
       headers: {
         Authorization: authCtx.token,
       },
@@ -32,6 +47,7 @@ const TaskTable = () => {
     promise
       .then((res) => {
         setTasks(res.data);
+        console.log('***',res.data);
       })
       .catch((err) => {
         alert(err.message);

@@ -20,8 +20,17 @@ const ProjectTable = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+  
+  const userId = authCtx.userId;
+  let projectsURL; 
+  if(authCtx.userRole === "ADMIN"){
+    projectsURL = "/api/v1/projects";
+  } else if(authCtx.userRole === "PM"){
+    projectsURL = "/api/v1/users/" + userId + "/projects";
+  }
+
   const fetchProjects = () => {
-    const promise = axios.get("/api/v1/projects", {
+    const promise = axios.get(projectsURL, {
       headers: {
         Authorization: authCtx.token,
       },

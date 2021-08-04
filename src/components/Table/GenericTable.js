@@ -8,6 +8,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import BasicButtonGroup from "../ButtonGroup/BasicButtonGroup";
 
 const useStyles = makeStyles({
   root: {
@@ -15,6 +16,10 @@ const useStyles = makeStyles({
   },
   container: {
     maxHeight: 440,
+  },
+  container: {
+    position:"relative",
+    alignItems:"center",
   },
 });
 
@@ -41,7 +46,7 @@ export default function GenericTable(props) {
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth}}
                 >
                   {column.label}
                 </TableCell>
@@ -53,16 +58,24 @@ export default function GenericTable(props) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {props.columns.map((column) => {
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                    {props.columns.map((column, index) => {
                       const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
+                      if (index === props.columns.length - 2) {
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                           <BasicButtonGroup className={classes.buttonGroup}/>
                         </TableCell>
-                      );
+                        );
+                      } else {
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === "number"
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      }
                     })}
                   </TableRow>
                 );

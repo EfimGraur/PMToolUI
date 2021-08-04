@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import AuthContext from "./store/auth-context";
 import ProjectTable from "./components/Project/ProjectTable";
 import UserTable from "./components/User/UserTable";
+import TaskTable from "./components/Task/TaskTable";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -29,6 +30,9 @@ function App() {
             </Route>
             <Route path="/users">
               <UserTable />
+            </Route>
+            <Route path="/tasks">
+              <TaskTable />
             </Route>
           </Switch>
         )}
