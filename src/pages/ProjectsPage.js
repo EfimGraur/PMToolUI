@@ -1,7 +1,7 @@
-import UserProjectTable from '../components/Project/UserProjectTable';
+import ProjectTable from '../components/Project/ProjectTable';
 
 const ProjectsPage = () => {
-  return <UserProjectTable />;
+  return <ProjectTable />;
 };
 
 export default ProjectsPage;

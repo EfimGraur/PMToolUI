@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -9,29 +9,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
-const columns = [
-  { id: "id", label: "Project ID", minWidth: 170 },
-  { id: "code", label: "Code", minWidth: 100 },
-  { id: "name", label: "Name", minWidth: 100 },
-  { id: "asignee", label: "Asignee", minWidth: 100 },
-  { id: "actions", label: "Actions", minWidth: 100 },
-  ,
-];
-
-function createData(id, code, name, asignee, actions) {
-  return { id, code, name, asignee };
-}
-
-const rows = [
-  { id: 1, code: "PUR", name: "ADIDAS", asignee: "Jora" },
-  {
-    id: 1,
-    code: "PUR",
-    name: "ADIDAS",
-    asignee: "Petea",
-  },
-];
-
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -41,11 +18,10 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ProjectsTable() {
+export default function GenericTable(props) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -61,7 +37,7 @@ export default function ProjectsTable() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
+              {props.columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
@@ -73,12 +49,12 @@ export default function ProjectsTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {props.rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
+                    {props.columns.map((column) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
@@ -97,7 +73,7 @@ export default function ProjectsTable() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={props.rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
