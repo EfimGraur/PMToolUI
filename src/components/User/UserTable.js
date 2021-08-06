@@ -12,7 +12,7 @@ const columns = [
   { id: "lastName", label: "Last Name", minWidth: 100 },
   { id: "username", label: "Username", minWidth: 100 },
   { id: "role", label: "role", minWidth: 100 },
-  { id: "actions", label: "Actions", minWidth: 100 },
+  { id: "actions", label: "Actions", minWidth: 100, align: "center"},
   ,
 ];
 
@@ -40,7 +40,7 @@ const UserTable = () => {
   return (
     <section className={classes.profile}>
       <h1>Users</h1>
-      <GenericTable columns={columns} rows={users}/>
+      <GenericTable columns={columns} rows={users} domain="users" fetchElements={fetchUsers}/>
     </section>
   );
 };

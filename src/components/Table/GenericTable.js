@@ -9,6 +9,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import BasicButtonGroup from "../ButtonGroup/BasicButtonGroup";
+import { Button, TableFooter } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
+import DeleteDialog from "../Dialog/DeleteDialog";
+import CreateUserDialog from "../Dialog/CreateUsersDialog";
+import CreateProjectDialog from "../Dialog/CreateProjectDialog";
+import AuthContext from "../../store/auth-context";
+import CreateTaskDialog from "../Dialog/CreateTaskDialog";
 
 const useStyles = makeStyles({
   root: {
@@ -18,12 +25,18 @@ const useStyles = makeStyles({
     maxHeight: 440,
   },
   container: {
-    position:"relative",
-    alignItems:"center",
+    position: "relative",
+    alignItems: "left",
+  },
+  button: {
+    textSizeAdjust: "50",
+    backgroundColor: "#3f51b5",
+    margin: "left",
   },
 });
 
 export default function GenericTable(props) {
+  const authCtx = useContext(AuthContext);
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -35,6 +48,9 @@ export default function GenericTable(props) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const showCreateUserDialog = props.domain === "users";
+  const showCreateProjectDialog = props.domain === "projects" && authCtx.userRole ==='ADMIN';
+  const showCreateTaskDialog = props.domain === "tasks" && authCtx.userRole !=='DEV';
 
   return (
     <Paper className={classes.root}>
@@ -42,11 +58,20 @@ export default function GenericTable(props) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell align="right" colSpan="10">
+                {/* <Button className={classes.button}><AddIcon/></Button> */}
+                {showCreateUserDialog && <CreateUserDialog fetchElements={props.fetchElements}/>}
+                {showCreateProjectDialog  && <CreateProjectDialog fetchElements={props.fetchElements}/>}
+                {showCreateTaskDialog  && <CreateTaskDialog fetchElements={props.fetchElements}/>}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
               {props.columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth}}
+                  style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -64,8 +89,13 @@ export default function GenericTable(props) {
                       if (index === props.columns.length - 2) {
                         return (
                           <TableCell key={column.id} align={column.align}>
-                           <BasicButtonGroup className={classes.buttonGroup}/>
-                        </TableCell>
+                            {/* <BasicButtonGroup className={classes.buttonGroup}/> */}
+                            <DeleteDialog
+                              domain={props.domain}
+                              elementId={row.id}
+                              fetchElements={props.fetchElements}
+                            />
+                          </TableCell>
                         );
                       } else {
                         return (
@@ -83,7 +113,7 @@ export default function GenericTable(props) {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
         count={props.rows.length}
@@ -91,7 +121,7 @@ export default function GenericTable(props) {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
     </Paper>
   );
 }

@@ -47,7 +47,7 @@ const ProjectTable = () => {
   return (
     <section className={classes.profile}>
       <h1>Projects</h1>
-      <GenericTable columns={columns} rows={projects}/>
+      <GenericTable columns={columns} rows={projects} domain="projects" fetchElements={fetchProjects}/>
     </section>
   );
 };

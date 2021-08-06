@@ -33,9 +33,6 @@ export default function SimpleCard(props) {
 
   return (
     <Card className={classes.root}>
-      <CardActions className={classes.actions}>
-        <Button size="small">Learn More</Button>
-      </CardActions>
       <CardContent>{props.children}</CardContent>
     </Card>
   );

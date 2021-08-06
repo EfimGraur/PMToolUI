@@ -56,7 +56,7 @@ const TaskTable = () => {
   return (
     <section className={classes.profile}>
       <h1>Tasks</h1>
-      <GenericTable columns={columns} rows={tasks}/>
+      <GenericTable columns={columns} rows={tasks} domain="tasks" fetchElements={fetchTasks}/>
     </section>
   );
 };

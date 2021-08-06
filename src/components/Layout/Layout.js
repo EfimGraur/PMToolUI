@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import SimpleCard from '../Card/SimpleCard';
 import MainNavigation from './MainNavigation';
-
+import { Paper } from '@material-ui/core';
 const Layout = (props) => {
   return (
     <Fragment>
