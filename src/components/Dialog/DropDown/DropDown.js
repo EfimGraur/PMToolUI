@@ -1,10 +1,10 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { makeStyles } from "@material-ui/core/styles";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -28,14 +28,15 @@ export default function DropDown(props) {
     }
   };
 
-  let listItems
-  if(props.list.length > 1 ){
-      listItems = props.list.map((item, index) => (
-        <MenuItem value={item} key={index}>
-          {item}
-        </MenuItem>
-  ));
-}
+  let listItems;
+  if (props.list.length >= 1) {
+    listItems = props.list.map((item, index) => (
+      <MenuItem value={item} key={index}>
+        {item}
+      </MenuItem>
+    ));
+    //TODO: else no items are available
+  }
 
   return (
     <div>
@@ -54,7 +55,9 @@ export default function DropDown(props) {
           </MenuItem>
           {listItems}
         </Select>
-        <FormHelperText>It is mandatory to select a {props.role}</FormHelperText>
+        <FormHelperText>
+          It is mandatory to select a {props.role}
+        </FormHelperText>
       </FormControl>
     </div>
   );

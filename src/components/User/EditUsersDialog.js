@@ -1,19 +1,18 @@
-import React, { useEffect, useContext, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import AddIcon from "@material-ui/icons/Add";
-import DropDown from "./DropDown/DropDown";
-import AuthContext from "../../store/auth-context";
+import TextField from "@material-ui/core/TextField";
+import EditIcon from "@material-ui/icons/Edit";
+import React, { useContext, useState } from "react";
+import { USERS_URL } from "../../constants/resourceConstants";
 import { axios } from "../../http/axios";
-import { isValidField } from "../../utils";
-import { isValidEmailField } from "../../utils";
-import { getRoles } from "../../utils";
+import AuthContext from "../../store/auth-context";
+import { getRoles, isValidEmailField, isValidField } from "../../utils";
+import DropDown from "../Dialog/DropDown/DropDown";
 
-export default function CreateTaskDialog(props) {
+export default function EditUserDialog(props) {
   const errorTest = {
     fontSize: 12,
     color: "#d3212d",
@@ -26,9 +25,11 @@ export default function CreateTaskDialog(props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [enteredRole, setEnteredRole] = React.useState([]);
+
+  const [enteredRole, setEnteredRole] = React.useState("");
   const [open, setOpen] = React.useState(false);
+
+  // const [currentElement, setCurrentElement] = React.useState({});
 
   const [isValidEmail, setIsValidEmail] = useState(isValidEmailField(email));
   const [isValidFirstName, setIsValidFirstName] = useState(
@@ -40,23 +41,37 @@ export default function CreateTaskDialog(props) {
   const [isValidRole, setIsValidRole] = useState(enteredRole.length >= 1);
 
   const handleClickOpen = () => {
+    const currentElement = props.rows.filter(
+      (element) => element.id === props.elementId
+    )[0];
+
+    setEmail(currentElement.email);
+    setFirstName(currentElement.firstName);
+    setLastName(currentElement.lastName);
+    setUsername(currentElement.username);
+    setEnteredRole(currentElement.role);
+
+    setIsValidEmail(isValidEmailField(currentElement.email));
+    setIsValidFirstName(isValidField(currentElement.firstName));
+    setIsValidLastName(isValidField(currentElement.lastName));
+    setIsValidRole(true);
+
     setOpen(true);
   };
 
   const handleClose = () => {
-    resetFields();
     setOpen(false);
+    resetFields();
   };
 
-  const handleCreate = () => {
-    createUser();
+  const handleUpdate = () => {
+    updateUser();
     resetFields();
     setOpen(false);
   };
 
   const resetFields = () => {
     setEnteredRole("");
-    setPassword("");
     setIsValidRole(false);
     setIsValidEmail(false);
     setIsValidFirstName(false);
@@ -75,23 +90,20 @@ export default function CreateTaskDialog(props) {
     setLastName(e.target.value);
     setIsValidLastName(isValidField(e.target.value));
   };
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
   const onChangeUsername = (e) => {
     setUsername(e.target.value);
   };
 
-  const createUser = () => {
-    const promise = axios.post(
-      "/api/v1/users",
+  const updateUser = () => {
+    const promise = axios.put(
+      USERS_URL + "/" + props.elementId,
       {
+        id: props.elementId,
         email: email,
         firstName: firstName,
         lastName: lastName,
         username: username,
         role: enteredRole,
-        password: password,
       },
       {
         headers: {
@@ -104,47 +116,29 @@ export default function CreateTaskDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert('User created successfully');
+        alert("User updated successfully");
       })
       .catch((err) => {
         //TODO: snackbar alert message
-        alert(err.message);
+        alert(err.response.data);
         setOpen(false);
       });
   };
-//TODO: move to CreateProjectsDialog
-  // const fetchProjects = () => {
-  //   const promise = axios.get("/api/v1/projects", {
-  //     headers: {
-  //       Authorization: authCtx.token,
-  //     },
-  //   });
 
-  //   promise
-  //     .then((res) => {
-  //       let projects = [];
-  //       res.data.map((project) => {
-  //         projects.push(project.name);
-  //       });
-  //       setPMs(projects);
-  //     })
-  //     .catch((err) => {
-  //       alert(err.message);
-  //     });
-  // };
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        <AddIcon />
+        <EditIcon />
       </Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Create</DialogTitle>
+        <DialogTitle id="form-dialog-title">Update User</DialogTitle>
         <DialogContent>
           <TextField
+            defaultValue={email}
             autoFocus
             margin="dense"
             id="email"
@@ -155,6 +149,7 @@ export default function CreateTaskDialog(props) {
           />
           {!isValidEmail && <p style={errorTest}> email must be valid</p>}
           <TextField
+            defaultValue={firstName}
             autoFocus
             margin="dense"
             id="firstName"
@@ -167,6 +162,7 @@ export default function CreateTaskDialog(props) {
             <p style={errorTest}> first name must be valid</p>
           )}
           <TextField
+            defaultValue={lastName}
             autoFocus
             margin="dense"
             id="lastName"
@@ -179,6 +175,7 @@ export default function CreateTaskDialog(props) {
             <p style={errorTest}> last name must be valid</p>
           )}
           <TextField
+            defaultValue={username}
             autoFocus
             margin="dense"
             id="userName"
@@ -186,15 +183,6 @@ export default function CreateTaskDialog(props) {
             type="text"
             fullWidth
             onChange={onChangeUsername}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            fullWidth
-            onChange={onChangePassword}
           />
           <DropDown
             role="Role"
@@ -209,7 +197,7 @@ export default function CreateTaskDialog(props) {
             Cancel
           </Button>
           <Button
-            onClick={handleCreate}
+            onClick={handleUpdate}
             color="primary"
             disabled={
               !isValidEmail ||
@@ -218,7 +206,7 @@ export default function CreateTaskDialog(props) {
               !isValidRole
             }
           >
-            Create
+            Update
           </Button>
         </DialogActions>
       </Dialog>

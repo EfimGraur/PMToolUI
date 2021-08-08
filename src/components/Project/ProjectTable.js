@@ -1,9 +1,11 @@
-import GenericTable from "../Table/GenericTable";
-import { useState, useEffect } from "react";
-import { useContext } from "react";
-import classes from "./Project.module.css";
+import { useContext, useEffect, useState } from "react";
+import { PROJECTS_DOMAIN } from "../../constants/domainConstants";
+import { USERS_URL } from "../../constants/resourceConstants";
+import { ADMIN_ROLE, PM_ROLE } from "../../constants/roleConstants";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
+import GenericTable from "../Table/GenericTable";
+import classes from "./Project.module.css";
 
 const columns = [
   { id: "id", label: "Project ID", minWidth: 170 },
@@ -20,13 +22,13 @@ const ProjectTable = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
-  
+
   const userId = authCtx.userId;
-  let projectsURL; 
-  if(authCtx.userRole === "ADMIN"){
+  let projectsURL;
+  if (authCtx.userRole === ADMIN_ROLE) {
     projectsURL = "/api/v1/projects";
-  } else if(authCtx.userRole === "PM"){
-    projectsURL = "/api/v1/users/" + userId + "/projects";
+  } else if (authCtx.userRole === PM_ROLE) {
+    projectsURL = USERS_URL + "/" + userId + "/projects";
   }
 
   const fetchProjects = () => {
@@ -47,7 +49,12 @@ const ProjectTable = () => {
   return (
     <section className={classes.profile}>
       <h1>Projects</h1>
-      <GenericTable columns={columns} rows={projects} domain="projects" fetchElements={fetchProjects}/>
+      <GenericTable
+        columns={columns}
+        rows={projects}
+        domain={PROJECTS_DOMAIN}
+        fetchElements={fetchProjects}
+      />
     </section>
   );
 };

@@ -1,0 +1,3 @@
+export const TASK_STATUS_NEW = "NEW";
+export const TASK_STATUS_IN_PROGRESS = "IN_PROGRESS";
+export const TASK_STATUS_COMPLETED = "COMPLETED";

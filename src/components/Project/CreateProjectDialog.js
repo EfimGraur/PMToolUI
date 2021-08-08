@@ -1,17 +1,18 @@
-import React, { useEffect, useContext, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import TextField from "@material-ui/core/TextField";
 import AddIcon from "@material-ui/icons/Add";
-import DropDown from "./DropDown/DropDown";
-import AuthContext from "../../store/auth-context";
+import React, { useContext, useEffect, useState } from "react";
+import { USERS_URL } from "../../constants/resourceConstants";
+import { PM_ROLE } from "../../constants/roleConstants";
 import { axios } from "../../http/axios";
+import AuthContext from "../../store/auth-context";
 import { isValidField } from "../../utils";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import InfoDialog from "./InfoDialog";
+import DropDown from "../Dialog/DropDown/DropDown";
+import InfoDialog from "../Dialog/InfoDialog";
 
 export default function CreateProjectDialog(props) {
   const errorTest = {
@@ -96,7 +97,7 @@ export default function CreateProjectDialog(props) {
   };
 
   const fetchPMs = () => {
-    const promise = axios.get("/api/v1/users?role=PM", {
+    const promise = axios.get(USERS_URL + "?role=PM", {
       headers: {
         Authorization: authCtx.token,
       },
@@ -129,6 +130,7 @@ export default function CreateProjectDialog(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
+        fullWidth
       >
         <DialogTitle id="form-dialog-title">Create Project</DialogTitle>
         {showDialogContent ? (
@@ -159,15 +161,19 @@ export default function CreateProjectDialog(props) {
             )}
 
             <DropDown
-              role="PM"
+              role={PM_ROLE}
               list={PMs}
-              field={enteredAssignee}
+              field={enteredAssignee} //TODO: array?
               setField={setEnteredAssignee}
               setIsValid={setIsValidAssignee}
             />
           </DialogContent>
         ) : (
-          <InfoDialog handleClose={handleClose} title="Project creation not possible" message="No Project Managers are available"/>
+          <InfoDialog
+            handleClose={handleClose}
+            title="Project creation not possible"
+            message="No Project Managers are available"
+          />
         )}
         <DialogActions>
           <Button onClick={handleClose} color="primary">

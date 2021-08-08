@@ -1,4 +1,4 @@
-import ProjectTable from '../components/Project/ProjectTable';
+import ProjectTable from "../components/Project/ProjectTable";
 
 const ProjectsPage = () => {
   return <ProjectTable />;

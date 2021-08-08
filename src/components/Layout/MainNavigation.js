@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-
+import { ADMIN_ROLE, PM_ROLE } from "../../constants/roleConstants";
 import AuthContext from "../../store/auth-context";
 import classes from "./MainNavigation.module.css";
 
@@ -12,13 +12,13 @@ const MainNavigation = () => {
     authCtx.logout();
     // redirect
   };
-  const isAdmin = authCtx.userRole === "ADMIN";
-  const isPM = authCtx.userRole === "ADMIN" || authCtx.userRole === "PM";
+  const isAdmin = authCtx.userRole === ADMIN_ROLE;
+  const isPM = authCtx.userRole === ADMIN_ROLE || authCtx.userRole === PM_ROLE;
 
   return (
     <header className={classes.header}>
       <Link to="/">
-        <div className={classes.logo}>Ricardo.ch</div>
+        <div className={classes.logo}>PMTool</div>
       </Link>
       <nav>
         <ul>

@@ -12,15 +12,16 @@ export const AuthContextProvider = (props) => {
   const [token, setToken] = useState(initialToken);
   const [userRole, setUserRole] = useState("");
   const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
 
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
     setToken(token);
     localStorage.setItem("token", token);
-    console.log(parseJwt(token));
     setUserRole(parseJwt(token).role);
     setUserId(parseJwt(token).userId);
+    setUsername(parseJwt(token).username);
   };
 
   const logoutHandler = () => {
@@ -49,6 +50,7 @@ export const AuthContextProvider = (props) => {
     logout: logoutHandler,
     userRole: userRole,
     userId: userId,
+    username: username,
   };
 
   return (

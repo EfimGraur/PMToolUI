@@ -1,12 +1,12 @@
-import { Switch, Route, Redirect } from "react-router-dom";
 import { useContext } from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
+import ProjectTable from "./components/Project/ProjectTable";
+import TaskTable from "./components/Task/TaskTable";
+import UserTable from "./components/User/UserTable";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import AuthContext from "./store/auth-context";
-import ProjectTable from "./components/Project/ProjectTable";
-import UserTable from "./components/User/UserTable";
-import TaskTable from "./components/Task/TaskTable";
 
 function App() {
   const authCtx = useContext(AuthContext);

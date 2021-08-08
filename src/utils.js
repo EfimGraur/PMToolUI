@@ -1,3 +1,5 @@
+import { ADMIN_ROLE, DEV_ROLE, PM_ROLE } from "./constants/roleConstants";
+
 export function isValidField(value) {
   return /^\s*[a-zA-Z][a-zA-Z0-9\-.\s]*$/.test(value);
 }
@@ -8,6 +10,10 @@ export function isValidEmailField(value) {
   );
 }
 
-export function getRoles(){
-  return ["PM","ADMIN","DEV"];
+export function getRoles() {
+  return [PM_ROLE, ADMIN_ROLE, DEV_ROLE];
+}
+
+export function getTaskStatuses() {
+  return ["NEW", "IN_PROGRESS", "COMPLETED"];
 }

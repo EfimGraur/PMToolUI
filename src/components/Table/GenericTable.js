@@ -1,21 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { ButtonGroup } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import BasicButtonGroup from "../ButtonGroup/BasicButtonGroup";
-import { Button, TableFooter } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteDialog from "../Dialog/DeleteDialog";
-import CreateUserDialog from "../Dialog/CreateUsersDialog";
-import CreateProjectDialog from "../Dialog/CreateProjectDialog";
+import React, { useContext } from "react";
+import {
+  PROJECTS_DOMAIN,
+  TASKS_DOMAIN,
+  USERS_DOMAIN
+} from "../../constants/domainConstants";
+import { ADMIN_ROLE, DEV_ROLE } from "../../constants/roleConstants";
 import AuthContext from "../../store/auth-context";
-import CreateTaskDialog from "../Dialog/CreateTaskDialog";
+import CreateTaskDialog from "../Task/CreateTaskDialog";
+import CreateUserDialog from "../User/CreateUsersDialog";
+import CreateProjectDialog from "../Project/CreateProjectDialog";
+import DeleteDialog from "../Dialog/DeleteDialog";
+import EditUserDialog from "../User/EditUsersDialog";
+import EditProjectDialog from "../Project/EditProjectDialog";
+import EditTaskDialog from "../Task/EditTaskDialog";
+
+
 
 const useStyles = makeStyles({
   root: {
@@ -48,9 +56,16 @@ export default function GenericTable(props) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const showCreateUserDialog = props.domain === "users";
-  const showCreateProjectDialog = props.domain === "projects" && authCtx.userRole ==='ADMIN';
-  const showCreateTaskDialog = props.domain === "tasks" && authCtx.userRole !=='DEV';
+  const showUserDialogs = props.domain === USERS_DOMAIN;
+
+  const showProjectsDialog =
+    props.domain === PROJECTS_DOMAIN && authCtx.userRole === ADMIN_ROLE;
+
+  const showCreateTaskDialog =
+    props.domain === TASKS_DOMAIN && authCtx.userRole !== DEV_ROLE;
+
+  const showDeleteDialog =
+    props.domain !== TASKS_DOMAIN || authCtx.userRole !== DEV_ROLE;
 
   return (
     <Paper className={classes.root}>
@@ -60,9 +75,18 @@ export default function GenericTable(props) {
             <TableRow>
               <TableCell align="right" colSpan="10">
                 {/* <Button className={classes.button}><AddIcon/></Button> */}
-                {showCreateUserDialog && <CreateUserDialog fetchElements={props.fetchElements}/>}
-                {showCreateProjectDialog  && <CreateProjectDialog fetchElements={props.fetchElements}/>}
-                {showCreateTaskDialog  && <CreateTaskDialog fetchElements={props.fetchElements}/>}
+                {showUserDialogs && (
+                  <CreateUserDialog fetchElements={props.fetchElements} />
+                )}
+                {showProjectsDialog && (
+                  <CreateProjectDialog fetchElements={props.fetchElements} />
+                )}
+                {showCreateTaskDialog && (
+                  <CreateTaskDialog
+                    fetchElements={props.fetchElements}
+                    rows={props.rows}
+                  />
+                )}
               </TableCell>
             </TableRow>
 
@@ -90,11 +114,39 @@ export default function GenericTable(props) {
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {/* <BasicButtonGroup className={classes.buttonGroup}/> */}
-                            <DeleteDialog
-                              domain={props.domain}
-                              elementId={row.id}
-                              fetchElements={props.fetchElements}
-                            />
+                            <ButtonGroup>
+                              {showDeleteDialog && (
+                                <DeleteDialog
+                                  domain={props.domain}
+                                  elementId={row.id}
+                                  fetchElements={props.fetchElements}
+                                />
+                              )}
+                              {props.domain === USERS_DOMAIN && (
+                                <EditUserDialog
+                                  domain={props.domain}
+                                  elementId={row.id}
+                                  fetchElements={props.fetchElements}
+                                  rows={props.rows}
+                                />
+                              )}
+                              {props.domain === PROJECTS_DOMAIN && (
+                                <EditProjectDialog
+                                  domain={props.domain}
+                                  elementId={row.id}
+                                  fetchElements={props.fetchElements}
+                                  rows={props.rows}
+                                />
+                              )}
+                              {props.domain === TASKS_DOMAIN && (
+                                <EditTaskDialog
+                                  domain={props.domain}
+                                  elementId={row.id}
+                                  fetchElements={props.fetchElements}
+                                  rows={props.rows}
+                                />
+                              )}
+                            </ButtonGroup>
                           </TableCell>
                         );
                       } else {

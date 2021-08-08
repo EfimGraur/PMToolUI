@@ -1,17 +1,17 @@
-import React, { useEffect, useContext, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import TextField from "@material-ui/core/TextField";
 import AddIcon from "@material-ui/icons/Add";
-import DropDown from "./DropDown/DropDown";
+import React, { useContext, useState } from "react";
 import AuthContext from "../../store/auth-context";
-import { axios } from "../../http/axios";
-import { isValidField } from "../../utils";
-import { isValidEmailField } from "../../utils";
-import { getRoles } from "../../utils";
+import {getRoles, isValidEmailField, isValidField} from "../../utils";
+import {axios} from "../../http/axios";
+import {USERS_URL} from "../../constants/resourceConstants";
+import DropDown from "../Dialog/DropDown/DropDown";
+
 
 export default function CreateUserDialog(props) {
   const errorTest = {
@@ -84,7 +84,7 @@ export default function CreateUserDialog(props) {
 
   const createUser = () => {
     const promise = axios.post(
-      "/api/v1/users",
+      USERS_URL,
       {
         email: email,
         firstName: firstName,
@@ -104,15 +104,15 @@ export default function CreateUserDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert('User created successfully');
+        alert("User created successfully");
       })
       .catch((err) => {
         //TODO: snackbar alert message
-        alert(err.message);
+        alert(err.response.data);
         setOpen(false);
       });
   };
-  
+
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -122,8 +122,9 @@ export default function CreateUserDialog(props) {
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
+        fullWidth
       >
-        <DialogTitle id="form-dialog-title">Create</DialogTitle>
+        <DialogTitle id="form-dialog-title">Create User</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

@@ -1,9 +1,11 @@
-import GenericTable from "../Table/GenericTable";
-import { useState, useEffect } from "react";
-import { useContext } from "react";
-import classes from "./Task.module.css";
+import { useContext, useEffect, useState } from "react";
+import { TASKS_DOMAIN } from "../../constants/domainConstants";
+import { TASKS_URL, USERS_URL } from "../../constants/resourceConstants";
+import { ADMIN_ROLE, DEV_ROLE, PM_ROLE } from "../../constants/roleConstants";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
+import GenericTable from "../Table/GenericTable";
+import classes from "./Task.module.css";
 
 const columns = [
   { id: "id", label: "User ID", minWidth: 170 },
@@ -12,7 +14,7 @@ const columns = [
   { id: "progress", label: "Progress", minWidth: 100 },
   { id: "status", label: "Status", minWidth: 100 },
   { id: "deadline", label: "Deadline", minWidth: 100 },
-  { id: "project", label: "Project", minWidth: 100 },
+  { id: "projectCode", label: "Project Code", minWidth: 100 },
   { id: "assignee", label: "Assignee", minWidth: 100 },
   { id: "actions", label: "Actions", minWidth: 100 },
   ,
@@ -26,16 +28,13 @@ const TaskTable = () => {
   }, []);
 
   const userId = authCtx.userId;
-  let tasksURL; 
-  if(authCtx.userRole === "ADMIN"){
-    tasksURL = "/api/v1/tasks";
-    console.log('**3333*');
-  } else if(authCtx.userRole === "PM"){
-    tasksURL = "/api/v1/users/" + userId + "/projects/tasks";
-    console.log('**444*');
-  } else if(authCtx.userRole === "DEV"){
-    tasksURL = "/api/v1/users/" + userId + "/tasks";
-    console.log('**555*');
+  let tasksURL;
+  if (authCtx.userRole === ADMIN_ROLE) {
+    tasksURL = TASKS_URL;
+  } else if (authCtx.userRole === PM_ROLE) {
+    tasksURL = USERS_URL + "/" + userId + "/projects/tasks";
+  } else if (authCtx.userRole === DEV_ROLE) {
+    tasksURL = USERS_URL + "/" + userId + "/tasks";
   }
   const fetchTasks = () => {
     const promise = axios.get(tasksURL, {
@@ -47,7 +46,6 @@ const TaskTable = () => {
     promise
       .then((res) => {
         setTasks(res.data);
-        console.log('***',res.data);
       })
       .catch((err) => {
         alert(err.message);
@@ -56,7 +54,12 @@ const TaskTable = () => {
   return (
     <section className={classes.profile}>
       <h1>Tasks</h1>
-      <GenericTable columns={columns} rows={tasks} domain="tasks" fetchElements={fetchTasks}/>
+      <GenericTable
+        columns={columns}
+        rows={tasks}
+        domain={TASKS_DOMAIN}
+        fetchElements={fetchTasks}
+      />
     </section>
   );
 };

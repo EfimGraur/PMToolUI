@@ -1,4 +1,3 @@
-import React, {useContext} from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -6,8 +5,19 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import AuthContext from "../../store/auth-context";
+import React, { useContext } from "react";
+import {
+  PROJECTS_DOMAIN,
+  TASKS_DOMAIN,
+  USERS_DOMAIN,
+} from "../../constants/domainConstants";
+import {
+  PROJECTS_URL,
+  TASKS_URL,
+  USERS_URL,
+} from "../../constants/resourceConstants";
 import { axios } from "../../http/axios";
+import AuthContext from "../../store/auth-context";
 
 export default function DeleteDialog(props) {
   const [open, setOpen] = React.useState(false);
@@ -26,18 +36,16 @@ export default function DeleteDialog(props) {
   };
 
   const authCtx = useContext(AuthContext);
-  const role = authCtx.role;
   let deleteUrl;
 
-  if(props.domain === "users"){
-    deleteUrl = "/api/v1/users/"+props.elementId;
-  } 
-  if(props.domain === "projects"){
-    console.log('aici');
-    deleteUrl = "/api/v1/projects/"+props.elementId;
+  if (props.domain === USERS_DOMAIN) {
+    deleteUrl = USERS_URL + "/" + props.elementId;
   }
-  if(props.domain === "tasks"){
-    deleteUrl = "/api/v1/tasks/"+props.elementId;
+  if (props.domain === PROJECTS_DOMAIN) {
+    deleteUrl = PROJECTS_URL + "/" + props.elementId;
+  }
+  if (props.domain === TASKS_DOMAIN) {
+    deleteUrl = TASKS_URL + "/" + props.elementId;
   }
 
   const deleteAction = () => {
@@ -49,13 +57,12 @@ export default function DeleteDialog(props) {
 
     promise
       .then((res) => {
-        alert('deleted successful!');
+        alert("deleted successful!");
         props.fetchElements();
       })
       .catch((err) => {
         alert(err.message);
       });
-      
   };
 
   return (
@@ -70,9 +77,7 @@ export default function DeleteDialog(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"DELETE"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"DELETE"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this item?
