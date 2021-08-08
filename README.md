@@ -1,5 +1,7 @@
-# PMToolUI
-Front End for the Project Management Tool
+# Project Management Tool FrontEnd
 
-to start UI App:  npm start
+UI for the Project Management App
 
+* Based on MaterialUI
+* Authentication based on JWT
+* State Management based on React's Context API
