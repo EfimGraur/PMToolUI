@@ -127,7 +127,7 @@ export default function CreateTaskDialog(props) {
 
     promise
       .then((res) => {
-        let fetchedProjectCodes = new Array();
+        let fetchedProjectCodes = [];
 
         res.data.map((project) => fetchedProjectCodes.push(project.code));
         setProjectCodes(fetchedProjectCodes);
@@ -147,7 +147,7 @@ export default function CreateTaskDialog(props) {
 
     promise
       .then((res) => {
-        let fetchedUsers = new Array();
+        let fetchedUsers = [];
         res.data.map((user) => fetchedUsers.push(user.username));
         setUsers(fetchedUsers);
       })

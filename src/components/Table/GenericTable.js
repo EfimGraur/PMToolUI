@@ -15,26 +15,22 @@ import {
 } from "../../constants/domainConstants";
 import { ADMIN_ROLE, DEV_ROLE } from "../../constants/roleConstants";
 import AuthContext from "../../store/auth-context";
-import CreateTaskDialog from "../Task/CreateTaskDialog";
-import CreateUserDialog from "../User/CreateUsersDialog";
-import CreateProjectDialog from "../Project/CreateProjectDialog";
 import DeleteDialog from "../Dialog/DeleteDialog";
-import EditUserDialog from "../User/EditUsersDialog";
+import CreateProjectDialog from "../Project/CreateProjectDialog";
 import EditProjectDialog from "../Project/EditProjectDialog";
+import CreateTaskDialog from "../Task/CreateTaskDialog";
 import EditTaskDialog from "../Task/EditTaskDialog";
-
-
+import CreateUserDialog from "../User/CreateUsersDialog";
+import EditUserDialog from "../User/EditUsersDialog";
 
 const useStyles = makeStyles({
   root: {
     width: "100%",
   },
   container: {
-    maxHeight: 440,
-  },
-  container: {
     position: "relative",
     alignItems: "left",
+    maxHeight: 440,
   },
   button: {
     textSizeAdjust: "50",
@@ -48,14 +44,15 @@ export default function GenericTable(props) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  //TODO: implement pagination
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
+  //
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(+event.target.value);
+  //   setPage(0);
+  // };
   const showUserDialogs = props.domain === USERS_DOMAIN;
 
   const showProjectsDialog =
@@ -165,6 +162,7 @@ export default function GenericTable(props) {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* TODO: implement pagination */}
       {/* <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
