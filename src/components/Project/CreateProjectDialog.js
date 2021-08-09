@@ -48,8 +48,8 @@ export default function CreateProjectDialog(props) {
 
   const handleCreate = () => {
     createProject();
-    resetFields();
     setOpen(false);
+    resetFields(); 
   };
 
   const resetFields = () => {
@@ -105,7 +105,7 @@ export default function CreateProjectDialog(props) {
 
     promise
       .then((res) => {
-        let fetchedPMs = new Array();
+        let fetchedPMs = [];
         res.data.map((user) => fetchedPMs.push(user.username));
         setPMs(fetchedPMs);
       })

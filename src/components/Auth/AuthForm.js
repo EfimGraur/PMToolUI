@@ -31,15 +31,14 @@ const AuthForm = () => {
     promise
       .then((res) => {
         authCtx.login(res.data.token);
+        setIsLoading(false);
         history.replace("/");
       })
       .catch((err) => {
         //TODO: snackbar alert message
+        setIsLoading(false);
         alert(err.message);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
   };
 
   return (

@@ -144,7 +144,7 @@ export default function EditTaskDialog(props) {
 
     promise
       .then((res) => {
-        let fetchedProjectCodes = new Array();
+        let fetchedProjectCodes = [];
         res.data.map((project) => fetchedProjectCodes.push(project.code));
         setProjectCodes(fetchedProjectCodes);
       })
