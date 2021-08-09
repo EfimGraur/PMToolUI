@@ -162,16 +162,6 @@ export default function GenericTable(props) {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* TODO: implement pagination */}
-      {/* <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={props.rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      /> */}
     </Paper>
   );
 }
