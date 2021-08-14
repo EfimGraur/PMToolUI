@@ -1,8 +1,10 @@
-import { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
 import classes from "./AuthForm.module.css";
+import CustomizedSnackbar, {MessageType} from "../Snackbar/CustomSnackbar";
+import {LOGIN_URL} from "../../constants/resourceConstants";
 
 
 const AuthForm = () => {
@@ -13,6 +15,8 @@ const AuthForm = () => {
   const authCtx = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [alertRendered, setAlertRendered] = useState(false);
+  const [alertMessageType, setAlertMessageType] = useState("")
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -23,7 +27,8 @@ const AuthForm = () => {
   };
 
   const login = (enteredEmail, enteredPassword) => {
-    const promise = axios.post("/api/v1/auth/login", {
+    setAlertRendered(false)
+    const promise = axios.post(LOGIN_URL, {
       email: enteredEmail,
       password: enteredPassword,
     });
@@ -35,14 +40,24 @@ const AuthForm = () => {
         history.replace("/");
       })
       .catch((err) => {
-        //TODO: snackbar alert message
+        if(err.response.status === 401){
+          setAlertRendered(true);
+          setAlertMessageType(MessageType.UNAUTHORIZED)
+          setIsLoading(false);
+          return
+        }
         setIsLoading(false);
-        alert(err.message);
+        setAlertRendered(true);
+        setAlertMessageType(MessageType.ERROR)
       })
   };
 
   return (
     <section className={classes.auth}>
+      <CustomizedSnackbar
+          messageType={alertMessageType}
+          render={alertRendered}
+      />
       <h1>Login</h1>
       <form onSubmit={submitHandler}>
         <div className={classes.control}>
@@ -61,7 +76,6 @@ const AuthForm = () => {
         <div className={classes.actions}>
           {!isLoading && <button>Login</button>}
           {isLoading && <p>Sending request...</p>}
-          <button type="button" className={classes.toggle}></button>
         </div>
       </form>
     </section>

@@ -11,6 +11,7 @@ import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
 import { getRoles, isValidEmailField, isValidField } from "../../utils";
 import DropDown from "../Dialog/DropDown/DropDown";
+import {MessageType} from "../Snackbar/CustomSnackbar";
 
 export default function EditUserDialog(props) {
   const errorTest = {
@@ -28,8 +29,6 @@ export default function EditUserDialog(props) {
 
   const [enteredRole, setEnteredRole] = React.useState("");
   const [open, setOpen] = React.useState(false);
-
-  // const [currentElement, setCurrentElement] = React.useState({});
 
   const [isValidEmail, setIsValidEmail] = useState(isValidEmailField(email));
   const [isValidFirstName, setIsValidFirstName] = useState(
@@ -95,6 +94,7 @@ export default function EditUserDialog(props) {
   };
 
   const updateUser = () => {
+    props.setAlertRendered(false);
     const promise = axios.put(
       USERS_URL + "/" + props.elementId,
       {
@@ -116,11 +116,18 @@ export default function EditUserDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert("User updated successfully");
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.UPDATED);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.response.data);
+        if(err.response.status === 409){
+          props.setAlertRendered(true);
+          props.setAlertMessageType(MessageType.DUPLICATE);
+          setOpen(false);
+          return
+        }
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
         setOpen(false);
       });
   };

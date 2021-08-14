@@ -8,12 +8,12 @@ const MainNavigation = () => {
   const authCtx = useContext(AuthContext);
 
   const isLoggedIn = authCtx.isLoggedIn;
+  const userRole = authCtx.userRole;
   const loggoutHandler = () => {
     authCtx.logout();
-    // redirect
   };
-  const isAdmin = authCtx.userRole === ADMIN_ROLE;
-  const isPM = authCtx.userRole === ADMIN_ROLE || authCtx.userRole === PM_ROLE;
+  const isAdmin = userRole === ADMIN_ROLE;
+  const isPM = userRole === ADMIN_ROLE || userRole === PM_ROLE;
 
   return (
     <header className={classes.header}>

@@ -3,6 +3,9 @@ import React, { useState } from "react";
 const AuthContext = React.createContext({
   token: "",
   isLoggedIn: false,
+  userRole: "",
+  userId:"",
+  username:"",
   login: (token) => {},
   logout: () => {},
 });
@@ -10,9 +13,12 @@ const AuthContext = React.createContext({
 export const AuthContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
-  const [userRole, setUserRole] = useState("");
-  const [userId, setUserId] = useState("");
-  const [username, setUsername] = useState("");
+  const initialUserRole = localStorage.getItem("userRole");
+  const [userRole, setUserRole] = useState(initialUserRole);
+  const initialUserId = localStorage.getItem("userId");
+  const [userId, setUserId] = useState(initialUserId);
+  const initialUsername = localStorage.getItem("username");
+  const [username, setUsername] = useState(initialUsername);
 
   const userIsLoggedIn = !!token;
 
@@ -20,13 +26,22 @@ export const AuthContextProvider = (props) => {
     setToken(token);
     localStorage.setItem("token", token);
     setUserRole(parseJwt(token).role);
+    localStorage.setItem("userRole", parseJwt(token).role);
     setUserId(parseJwt(token).userId);
+    localStorage.setItem("userId", parseJwt(token).userId);
     setUsername(parseJwt(token).username);
+    localStorage.setItem("username", parseJwt(token).username);
   };
 
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
+    setUserId(null);
+    localStorage.removeItem("userId");
+    setUsername(null);
+    localStorage.removeItem("username");
+    setUserRole(null);
+    localStorage.removeItem("useRole");
   };
 
   const parseJwt = (token) => {

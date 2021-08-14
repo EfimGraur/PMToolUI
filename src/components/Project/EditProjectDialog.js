@@ -13,6 +13,7 @@ import AuthContext from "../../store/auth-context";
 import { isValidField } from "../../utils";
 import DropDown from "../Dialog/DropDown/DropDown";
 import InfoDialog from "../Dialog/InfoDialog";
+import {MessageType} from "../Snackbar/CustomSnackbar";
 
 export default function EditProjectDialog(props) {
   const errorTest = {
@@ -79,6 +80,7 @@ export default function EditProjectDialog(props) {
   };
 
   const updateProject = () => {
+    props.setAlertRendered(false);
     const promise = axios.put(
       PROJECTS_URL + "/" + props.elementId,
       {
@@ -98,11 +100,18 @@ export default function EditProjectDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert("Project updated successfully");
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.UPDATED);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.response.data);
+        if(err.response.status === 409){
+          props.setAlertRendered(true);
+          props.setAlertMessageType(MessageType.DUPLICATE);
+          setOpen(false);
+          return
+        }
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
         setOpen(false);
       });
   };
@@ -121,8 +130,9 @@ export default function EditProjectDialog(props) {
         setPMs(fetchedPMs);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.message);
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
+        setOpen(false);
       });
   };
 

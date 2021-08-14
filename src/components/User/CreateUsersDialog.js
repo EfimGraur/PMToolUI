@@ -11,6 +11,7 @@ import {getRoles, isValidEmailField, isValidField} from "../../utils";
 import {axios} from "../../http/axios";
 import {USERS_URL} from "../../constants/resourceConstants";
 import DropDown from "../Dialog/DropDown/DropDown";
+import {MessageType} from "../Snackbar/CustomSnackbar";
 
 
 export default function CreateUserDialog(props) {
@@ -83,6 +84,7 @@ export default function CreateUserDialog(props) {
   };
 
   const createUser = () => {
+    props.setAlertRendered(false);
     const promise = axios.post(
       USERS_URL,
       {
@@ -104,11 +106,18 @@ export default function CreateUserDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert("User created successfully");
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.CREATED);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.response.data);
+        if(err.response.status === 409){
+          props.setAlertRendered(true);
+          props.setAlertMessageType(MessageType.DUPLICATE);
+          setOpen(false);
+          return
+        }
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
         setOpen(false);
       });
   };

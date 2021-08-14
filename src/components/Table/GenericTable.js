@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import React, { useContext } from "react";
+import React, {useContext, useState} from "react";
 import {
   PROJECTS_DOMAIN,
   TASKS_DOMAIN,
@@ -18,6 +18,7 @@ import AuthContext from "../../store/auth-context";
 import DeleteDialog from "../Dialog/DeleteDialog";
 import CreateProjectDialog from "../Project/CreateProjectDialog";
 import EditProjectDialog from "../Project/EditProjectDialog";
+import CustomizedSnackbar from "../Snackbar/CustomSnackbar";
 import CreateTaskDialog from "../Task/CreateTaskDialog";
 import EditTaskDialog from "../Task/EditTaskDialog";
 import CreateUserDialog from "../User/CreateUsersDialog";
@@ -53,6 +54,9 @@ export default function GenericTable(props) {
   //   setRowsPerPage(+event.target.value);
   //   setPage(0);
   // };
+  const [alertRendered, setAlertRendered] = useState(false);
+  const [alertMessageType, setAlertMessageType] = useState("")
+
   const showUserDialogs = props.domain === USERS_DOMAIN;
 
   const showProjectsDialog =
@@ -66,22 +70,28 @@ export default function GenericTable(props) {
 
   return (
     <Paper className={classes.root}>
+      <CustomizedSnackbar
+          messageType={alertMessageType}
+          render={alertRendered}
+          domain={props.domain}
+        />
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               <TableCell align="right" colSpan="10">
-                {/* <Button className={classes.button}><AddIcon/></Button> */}
                 {showUserDialogs && (
-                  <CreateUserDialog fetchElements={props.fetchElements} />
+                  <CreateUserDialog fetchElements={props.fetchElements} setAlertRendered={setAlertRendered} setAlertMessageType={setAlertMessageType}/>
                 )}
                 {showProjectsDialog && (
-                  <CreateProjectDialog fetchElements={props.fetchElements} />
+                  <CreateProjectDialog fetchElements={props.fetchElements} setAlertRendered={setAlertRendered} setAlertMessageType={setAlertMessageType} />
                 )}
                 {showCreateTaskDialog && (
                   <CreateTaskDialog
                     fetchElements={props.fetchElements}
                     rows={props.rows}
+                    setAlertRendered={setAlertRendered}
+                    setAlertMessageType={setAlertMessageType}
                   />
                 )}
               </TableCell>
@@ -110,13 +120,14 @@ export default function GenericTable(props) {
                       if (index === props.columns.length - 2) {
                         return (
                           <TableCell key={column.id} align={column.align}>
-                            {/* <BasicButtonGroup className={classes.buttonGroup}/> */}
                             <ButtonGroup>
                               {showDeleteDialog && (
                                 <DeleteDialog
                                   domain={props.domain}
                                   elementId={row.id}
                                   fetchElements={props.fetchElements}
+                                  setAlertRendered={setAlertRendered}
+                                  setAlertMessageType={setAlertMessageType}
                                 />
                               )}
                               {props.domain === USERS_DOMAIN && (
@@ -125,6 +136,8 @@ export default function GenericTable(props) {
                                   elementId={row.id}
                                   fetchElements={props.fetchElements}
                                   rows={props.rows}
+                                  setAlertRendered={setAlertRendered}
+                                  setAlertMessageType={setAlertMessageType}
                                 />
                               )}
                               {props.domain === PROJECTS_DOMAIN && (
@@ -133,6 +146,8 @@ export default function GenericTable(props) {
                                   elementId={row.id}
                                   fetchElements={props.fetchElements}
                                   rows={props.rows}
+                                  setAlertRendered={setAlertRendered}
+                                  setAlertMessageType={setAlertMessageType}
                                 />
                               )}
                               {props.domain === TASKS_DOMAIN && (
@@ -141,6 +156,8 @@ export default function GenericTable(props) {
                                   elementId={row.id}
                                   fetchElements={props.fetchElements}
                                   rows={props.rows}
+                                  setAlertRendered={setAlertRendered}
+                                  setAlertMessageType={setAlertMessageType}
                                 />
                               )}
                             </ButtonGroup>

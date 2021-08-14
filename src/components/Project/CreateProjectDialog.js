@@ -6,13 +6,14 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import AddIcon from "@material-ui/icons/Add";
 import React, { useContext, useEffect, useState } from "react";
-import { USERS_URL } from "../../constants/resourceConstants";
+import {PROJECTS_URL, USERS_URL} from "../../constants/resourceConstants";
 import { PM_ROLE } from "../../constants/roleConstants";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
 import { isValidField } from "../../utils";
 import DropDown from "../Dialog/DropDown/DropDown";
 import InfoDialog from "../Dialog/InfoDialog";
+import {MessageType} from "../Snackbar/CustomSnackbar";
 
 export default function CreateProjectDialog(props) {
   const errorTest = {
@@ -27,7 +28,7 @@ export default function CreateProjectDialog(props) {
   const [name, setName] = useState("");
   const [PMs, setPMs] = useState([]);
 
-  const [enteredAssignee, setEnteredAssignee] = React.useState([]);
+  const [enteredAssignee, setEnteredAssignee] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
   const [isValidCode, setIsValidCode] = useState(code.length > 2);
@@ -69,8 +70,9 @@ export default function CreateProjectDialog(props) {
   };
 
   const createProject = () => {
+    props.setAlertRendered(false);
     const promise = axios.post(
-      "/api/v1/projects",
+      PROJECTS_URL,
       {
         code: code,
         name: name,
@@ -87,16 +89,24 @@ export default function CreateProjectDialog(props) {
       .then((res) => {
         props.fetchElements();
         setOpen(false);
-        alert("Project created successfully");
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.CREATED);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.message);
+        if(err.response.status === 409){
+          props.setAlertRendered(true);
+          props.setAlertMessageType(MessageType.DUPLICATE);
+          setOpen(false);
+          return
+        }
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
         setOpen(false);
       });
   };
 
   const fetchPMs = () => {
+    props.setAlertRendered(false);
     const promise = axios.get(USERS_URL + "?role=PM", {
       headers: {
         Authorization: authCtx.token,
@@ -110,8 +120,8 @@ export default function CreateProjectDialog(props) {
         setPMs(fetchedPMs);
       })
       .catch((err) => {
-        //TODO: snackbar alert message
-        alert(err.message);
+        props.setAlertRendered(true);
+        props.setAlertMessageType(MessageType.ERROR);
       });
   };
 
@@ -163,7 +173,7 @@ export default function CreateProjectDialog(props) {
             <DropDown
               role={PM_ROLE}
               list={PMs}
-              field={enteredAssignee} //TODO: array?
+              field={enteredAssignee}
               setField={setEnteredAssignee}
               setIsValid={setIsValidAssignee}
             />

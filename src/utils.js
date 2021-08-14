@@ -10,6 +10,10 @@ export function isValidEmailField(value) {
   );
 }
 
+export function isValidProgressValue(value){
+  return !isNaN(value) && value >= 0 && value <= 100
+}
+
 export function getRoles() {
   return [PM_ROLE, ADMIN_ROLE, DEV_ROLE];
 }

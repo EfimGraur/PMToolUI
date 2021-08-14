@@ -18,6 +18,7 @@ import {
 } from "../../constants/resourceConstants";
 import { axios } from "../../http/axios";
 import AuthContext from "../../store/auth-context";
+import {MessageType} from "../Snackbar/CustomSnackbar";
 
 export default function DeleteDialog(props) {
   const [open, setOpen] = React.useState(false);
@@ -49,6 +50,7 @@ export default function DeleteDialog(props) {
   }
 
   const deleteAction = () => {
+    props.setAlertRendered(false);
     const promise = axios.delete(deleteUrl, {
       headers: {
         Authorization: authCtx.token,
@@ -57,11 +59,13 @@ export default function DeleteDialog(props) {
 
     promise
       .then((res) => {
-        alert("deleted successful!");
+        props.setAlertRendered(true)
+        props.setAlertMessageType(MessageType.DELETED)
         props.fetchElements();
       })
       .catch((err) => {
-        alert(err.message);
+        props.setAlertRendered(true)
+        props.setAlertMessageType(MessageType.ERROR)
       });
   };
 
